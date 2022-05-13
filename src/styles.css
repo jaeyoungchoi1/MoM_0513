@@ -1,0 +1,75 @@
+/* overides*/
+html,
+body {
+  margin: 0;
+}
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.base {
+  padding: 0 !important;
+}
+
+.drawer {
+   {
+    /*padding: 30px !important;*/
+  }
+}
+
+.drawer__content {
+  padding: 0 !important;
+  max-height: calc(80vh - 25px) !important;
+}
+
+.drawer__handle {
+  background: #e3e3e3 !important;
+  height: 5px !important;
+  width: 40px !important;
+  border-radius: 5px !important;
+}
+
+.react-bottom-drawer__handle-wrapper {
+  padding: 4px 0 25px !important;
+}
+
+.react-bottom-drawer__content-wrapper {
+  padding: 0 !important;
+}
+
+.react-bottom-drawer__handle {
+  width: 60px !important;
+  height: 3px !important;
+  background: rgb(240, 240, 240) !important;
+  border-radius: 2px !important;
+}
+
+.react-bottom-drawer__backdrop {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.react-bottom-drawer__drawer {
+  /*left: 50% !important;*/
+  /*margin-left: -184px !important;*/
+  bottom: 0;
+  max-height: 70vh;
+  /*width: 368px !important;*/
+  width: 100vw !important;
+  background: white;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  /*box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.1);*/
+}
+
+.react-bottom-drawer__drawer h4 {
+  margin: 0 20px 10px 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgb(233, 233, 233);
+}
+
+.mobileSettings {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
