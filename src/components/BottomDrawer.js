@@ -28,31 +28,6 @@ const BottomDrawer = (props) => {
   const openDrawer = React.useCallback(() => setIsVisible(true), []);
   const closeDrawer = React.useCallback(() => setIsVisible(false), []);
 
-  const [infos, setInfos] = useState([]);
-
-  useEffect(() => {
-    const fireData = firestore.collection("places");
-    fireData.get().then((docs) => {
-      docs.forEach((doc) => {
-        if (doc.exists) {
-          // document의 데이터
-          console.log(doc.data());
-          // document의 id
-          console.log(doc.id);
-        }
-      });
-    });
-    fireData.onSnapshot((snapshot) => {
-      setInfos(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-          location: doc.data().location,
-        }))
-      );
-    });
-  });
-
   const save = (e) => {
     setDoc(
       doc(firestore, "places", "3"),
@@ -123,8 +98,12 @@ const BottomDrawer = (props) => {
             })}
           </ul>
           <ul>
-            {infos.map((info) => {
-              return <li>{info}</li>;
+            {props.infos.map((info, index) => {
+              return (
+                <Typography key={index}>
+                  {info.name}
+                </Typography>
+              )
             })}
           </ul>
         </div>
