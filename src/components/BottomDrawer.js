@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Drawer from "react-bottom-drawer";
 import DrawerContent from "./DrawerContent";
 import {
@@ -9,6 +9,10 @@ import {
   FormControl,
   InputLabel,
   Input,
+  Modal,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { firestore } from "../firebase";
@@ -21,12 +25,19 @@ import {
   Timestamp,
   updateDoc,
 } from "@firebase/firestore";
-import { isReturnStatement } from "typescript";
+import Detail from "./Detail";
+import Memoriebox from "./Memoriebox"
+
+React.useLayoutEffect=React.useEffect
+
+
 
 const BottomDrawer = (props) => {
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const openDrawer = React.useCallback(() => setIsVisible(true), []);
   const closeDrawer = React.useCallback(() => setIsVisible(false), []);
+  
+  const [input, setInput] = useState("");
 
   const save = (e) => {
     setDoc(
@@ -51,15 +62,22 @@ const BottomDrawer = (props) => {
     });*/
   };
 
+  const addPlace = (event) => {
+    event.preventDefault();
+    firestore.collection("places").add({
+      name: input,
+    });
+  
+    setInput("");
+  };
+
   return (
     <div className="base">
       <center>
         <Box sx={{ bottom: 0, textAlign: "center", pt: 1 }}>
           <Button onClick={openDrawer}>여기를 누르세요</Button>
           <Button
-            onClick={(e) => {
-              save(e);
-            }}
+            onClick={save}
           >
             저장
           </Button>
@@ -72,6 +90,8 @@ const BottomDrawer = (props) => {
           sx={{ position: "absolute", bottom: 16, right: 16 }}
         ></Fab>
       </center>
+
+
 
       <Drawer
         duration={250}
@@ -97,15 +117,44 @@ const BottomDrawer = (props) => {
               );
             })}
           </ul>
+
+          <FormControl>
+            <InputLabel>입력하시오..!</InputLabel>
+            <Input
+              value={input}
+              onChange={(event) => {
+                setInput(event.target.value);
+              }}
+            />
+          </FormControl>
+          <Button
+              disabled={!input} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
+              type="submit"
+              onClick={addPlace}
+              variant="contained"
+              color="primary"
+            >
+              add
+            </Button>
+
           <ul>
+            {props.infos.map((info) => (
+              <Memoriebox info={info} />
+            ))}
+          </ul>
+
+
+          <List>
             {props.infos.map((info, index) => {
               return (
-                <Typography key={index}>
+                <ListItem key={index}>
+                <ListItemText>
                   {info.name}
-                </Typography>
+                </ListItemText>
+                </ListItem>
               )
             })}
-          </ul>
+          </List>
         </div>
 
         <DrawerContent />
