@@ -44,7 +44,7 @@ const BottomDrawer = (props) => {
       doc(firestore, "places", "3"),
       {
         name: "3",
-        location: "ddd",
+        position: "ddd",
       },
       { merge: true }
     );
@@ -138,8 +138,20 @@ const BottomDrawer = (props) => {
             </Button>
 
           <ul>
-            {props.infos.map((info) => (
-              <Memoriebox info={info} />
+            {props.infos.map((info, index) => (
+              <>
+                <Typography
+                sx={{ p: 2, color: "text.secondary" }}
+                key={index}
+                onClick={(e) => {
+                  closeDrawer();
+                  props.onClick(e, info);
+                }}
+                >
+                  {info.name}
+                </Typography>
+              <Memoriebox info={info} onClick={props.onClick}/>
+              </>
             ))}
           </ul>
 

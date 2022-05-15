@@ -12,7 +12,7 @@ displayMarkers = () => {
   })
 }*/
 
-export class MapContainer extends React.Component {
+const MapContainer = (props) => {
   /*
   addMarker() {
     const places = this.props.places;
@@ -33,22 +33,33 @@ export class MapContainer extends React.Component {
     });
   }*/
 
-  render() {
-    const places = this.props.places;
+    /*const places = props.places;
     const markers = places.map((place) => (
       <Marker
         name={place.name}
         position={place.position}
         key={place.id}
         onClick={(e) => {
-          this.props.onClick(e, place);
+          props.onClick(e, place);
         }}
         icon={image}
+      />
+    ));*/
+    const infos = props.infos;
+    const infoMarkers = infos.map((info) => (
+      <Marker
+        name={info.name}
+        position={{lat : info.position.latitude, lng : info.position.longitude}}
+        key={info.id}
+        
+        onClick={(e) => {
+          props.onClick(e, info);
+        }}
       />
     ));
     return (
       <Map
-        google={this.props.google}
+        google={props.google}
         zoom={14}
         initialCenter={{
           lat: 37.5,
@@ -60,16 +71,20 @@ export class MapContainer extends React.Component {
         {
           //<Marker onClick={this.onMarkerClick} name={"Current location"} />
         }
-        {markers}
-        <InfoWindow visible={true} position={this.props.selectedItem.position}>
+        {/*markers*/}
+        {infoMarkers}
+        <InfoWindow visible={props.infoWindow} position={{
+          lat : props.selectedItem.position.latitude,
+          lng : props.selectedItem.position.longitude
+        }}>
           <div>
-            <h1>{this.props.selectedItem.name}</h1>
+            <h1>{props.selectedItem.name}</h1>
             <MediaCard sx={{ width: 50 }} />
           </div>
         </InfoWindow>
       </Map>
     );
-  }
+  
 }
 
 export default GoogleApiWrapper({

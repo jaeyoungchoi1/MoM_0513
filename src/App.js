@@ -5,35 +5,42 @@ import Maps from "./components/Maps";
 import places from "./Places";
 import { firestore } from "./firebase";
 
-function App() {
+React.useLayoutEffect = React.useEffect;
+
+const App = () => {
   const [infos, setInfos] = useState([]);
-  const [selectedItem, setSelectedItem] = useState({ lat: 0, lng: 0 });
+  const [selectedItem, setSelectedItem] = useState({position : { latitude: 0, longitude: 0 }});
+  const [infoWindow, setInfoWindow] = useState(false);
+  const fireData = firestore.collection("places");
+
 
   const showInfo = (e, selectedItem) => {
-    setSelectedItem({ selectedItem: selectedItem });
+    setInfoWindow(true);
+    setSelectedItem(selectedItem);
     console.log(selectedItem);
-  };
+  }
 
   useEffect(() => {
-    const fireData = firestore.collection("places");
     fireData.onSnapshot((snapshot) => {
       setInfos(
         snapshot.docs.map((doc) => ({
           id: doc.id,
           name: doc.data().name,
-          location: doc.data().location,
+          position: doc.data().position,
         }))
       );
     });
-  }, []);
+  }, [])
 
   return (
     <div className="App">
-      <BottomDrawer infos={infos} places={places} onClick={showInfo.bind(this)} />
+      <BottomDrawer infos={infos} places={places} onClick={showInfo} />
       <Maps
+        infos={infos}
         places={places}
         selectedItem={selectedItem}
-        onClick={showInfo.bind(this)}
+        onClick={showInfo}
+        infoWindow={infoWindow}
       />
     </div>
   );
