@@ -9,16 +9,17 @@ React.useLayoutEffect = React.useEffect;
 
 const App = () => {
   const [infos, setInfos] = useState([]);
-  const [selectedItem, setSelectedItem] = useState({position : { latitude: 0, longitude: 0 }});
+  const [selectedItem, setSelectedItem] = useState({
+    position: { latitude: 0, longitude: 0 },
+  });
   const [infoWindow, setInfoWindow] = useState(false);
   const fireData = firestore.collection("places");
-
 
   const showInfo = (e, selectedItem) => {
     setInfoWindow(true);
     setSelectedItem(selectedItem);
     console.log(selectedItem);
-  }
+  };
 
   useEffect(() => {
     fireData.onSnapshot((snapshot) => {
@@ -27,10 +28,11 @@ const App = () => {
           id: doc.id,
           name: doc.data().name,
           position: doc.data().position,
+          imgUrl: doc.data().imgUrl,
         }))
       );
     });
-  }, [])
+  }, []);
 
   return (
     <div className="App">
@@ -44,6 +46,6 @@ const App = () => {
       />
     </div>
   );
-}
+};
 
 export default App;

@@ -33,7 +33,7 @@ const MapContainer = (props) => {
     });
   }*/
 
-    /*const places = props.places;
+  /*const places = props.places;
     const markers = places.map((place) => (
       <Marker
         name={place.name}
@@ -45,50 +45,52 @@ const MapContainer = (props) => {
         icon={image}
       />
     ));*/
-    const infos = props.infos;
-    const infoMarkers = infos.map((info) => (
-      <Marker
-        name={info.name}
-        position={{lat : info.position.latitude, lng : info.position.longitude}}
-        key={info.id}
-        
-        onClick={(e) => {
-          props.onClick(e, info);
+  const infos = props.infos;
+  const selectedItem = props.selectedItem;
+  const infoMarkers = infos.map((info) => (
+    <Marker
+      name={info.name}
+      position={{ lat: info.position.latitude, lng: info.position.longitude }}
+      key={info.id}
+      onClick={(e) => {
+        props.onClick(e, info);
+      }}
+    />
+  ));
+  return (
+    <Map
+      google={props.google}
+      zoom={14}
+      initialCenter={{
+        lat: 37.5,
+        lng: 127,
+      }}
+      disableDefaultUI={true}
+      fullscreenControl={false}
+    >
+      {
+        //<Marker onClick={this.onMarkerClick} name={"Current location"} />
+      }
+      {/*markers*/}
+      {infoMarkers}
+      <InfoWindow
+        visible={props.infoWindow}
+        position={{
+          lat: selectedItem.position.latitude,
+          lng: selectedItem.position.longitude,
         }}
-      />
-    ));
-    return (
-      <Map
-        google={props.google}
-        zoom={14}
-        initialCenter={{
-          lat: 37.5,
-          lng: 127
-        }}
-        disableDefaultUI={true}
-        fullscreenControl={false}
       >
-        {
-          //<Marker onClick={this.onMarkerClick} name={"Current location"} />
-        }
-        {/*markers*/}
-        {infoMarkers}
-        <InfoWindow visible={props.infoWindow} position={{
-          lat : props.selectedItem.position.latitude,
-          lng : props.selectedItem.position.longitude
-        }}>
-          <div>
-            <h1>{props.selectedItem.name}</h1>
-            <MediaCard sx={{ width: 50 }} />
-          </div>
-        </InfoWindow>
-      </Map>
-    );
-  
-}
+        <div>
+          <h1>{selectedItem.name}</h1>
+          <MediaCard sx={{ width: 50 }} imgUrl={selectedItem.imgUrl} />
+        </div>
+      </InfoWindow>
+    </Map>
+  );
+};
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyBU-hDVtV5lNXc4jsnr0AIaUAUcMylVhpY",
   language: "ko",
-  region: "KR"
+  region: "KR",
 })(MapContainer);
