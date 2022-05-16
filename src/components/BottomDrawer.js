@@ -15,7 +15,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { firestore } from "../firebase";
+import { firestorage, firestore } from "../firebase";
 import {
   collection,
   deleteField,
@@ -37,7 +37,11 @@ const BottomDrawer = (props) => {
   const openDrawer = React.useCallback(() => setIsVisible(true), []);
   const closeDrawer = React.useCallback(() => setIsVisible(false), []);
   
+  
   const [input, setInput] = useState("");
+  const [file, setFile] = useState('');
+  const [attachment, setAttachment] = useState();
+
 
   const save = (e) => {
     setDoc(
@@ -62,13 +66,31 @@ const BottomDrawer = (props) => {
     });*/
   };
 
-  const addPlace = (event) => {
+  const addPlace = async (event) => {
     event.preventDefault();
-    firestore.collection("places").add({
+    const attachmentUrl = "";
+
+    if(attachment !== ""){
+      const attachmentRef = firestorage.ref().child('${userObj.uid}');
+      const response = await attachmentRef.putString(attachment, "data_url");
+      attachmentUrl = await response.ref.getDownloadURL();
+    }
+
+    const placeObj = {
       name: input,
-    });
+      url : attachmentUrl
+    }
+
+    await firestore.collection("places").add(placeObj);
   
     setInput("");
+    setFile('');
+    setAttachment();
+  };
+
+  const onClearAttachment = () => {
+    setAttachment(null)
+    setFile('')
   };
 
   return (
@@ -126,7 +148,30 @@ const BottomDrawer = (props) => {
                 setInput(event.target.value);
               }}
             />
+            <Input
+              type="file"
+              value={file}
+              onChange={(event) => {
+                const {target:{files, value}} = event;
+                const theFile = files[0];
+                const reader = new FileReader();
+                setFile(value)
+                reader.onloadend = (finishedEvent) => {
+                  const { currentTarget: {result}} = finishedEvent
+                  setAttachment(result)
+                }
+                reader.readAsDataURL(theFile);
+              }}
+            >
+            </Input>
+            {attachment && (
+              <div>
+                <img src={attachment} width="50px" height="50px" alt="attachment"/>
+                <button onClick={onClearAttachment}>Clear</button>
+              </div>
+            )}
           </FormControl>
+
           <Button
               disabled={!input} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
               type="submit"
