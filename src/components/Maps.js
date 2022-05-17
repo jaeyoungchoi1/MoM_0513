@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import MediaCard from "./Card";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
@@ -55,15 +55,40 @@ const MapContainer = (props) => {
       onClick={(e) => {
         props.onClick(e, info);
       }}
+      icon={image}
     />
   ));
+
+
+  const [initLat, setInitLat] = useState(37.5);
+  const [initLng, setInitLng] = useState(127);
+
+  useEffect(() => {
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition((position)=>{
+        setInitLat(position.coords.latitude);
+        setInitLng(position.coords.longitude);
+        console.log("lat: " + position.coords.latitude);
+        console.log("lng: " + position.coords.longitude);
+      });
+    }
+    else{
+      console.log("Geolocation is not supported by this browser");
+    }
+  },[]);
+
   return (
+    
     <Map
       google={props.google}
-      zoom={14}
+      zoom={13}
       initialCenter={{
-        lat: 37.5,
-        lng: 127,
+        lat: initLat,
+        lng: initLng,
+      }}
+      center={{
+        lat: initLat,
+        lng: initLng,
       }}
       disableDefaultUI={true}
       fullscreenControl={false}
@@ -81,8 +106,7 @@ const MapContainer = (props) => {
         }}
       >
         <div>
-          <h1>{selectedItem.name}</h1>
-          <MediaCard sx={{ width: 50 }} imgUrl={selectedItem.imgUrl} />
+          <MediaCard sx={{ width: 40 }} selectedItem={selectedItem} imgUrl={selectedItem.imgUrl} />
         </div>
       </InfoWindow>
     </Map>

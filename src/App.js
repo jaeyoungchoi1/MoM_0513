@@ -18,7 +18,7 @@ const App = () => {
   const showInfo = (e, selectedItem) => {
     setInfoWindow(true);
     setSelectedItem(selectedItem);
-    console.log(selectedItem);
+    //console.log(selectedItem);
   };
 
   useEffect(() => {
@@ -29,6 +29,7 @@ const App = () => {
           name: doc.data().name,
           position: doc.data().position,
           imgUrl: doc.data().imgUrl,
+          date: doc.data().date,
         }))
       );
     });
