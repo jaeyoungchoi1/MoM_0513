@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import MediaCard from "./Card";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 import image from "../image/heartMarker_20x32.png";
+import { firestore } from "../firebase";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
 /*
@@ -106,7 +107,9 @@ const MapContainer = (props) => {
         }}
       >
         <div>
-          <MediaCard sx={{ width: 40 }} selectedItem={selectedItem} imgUrl={selectedItem.imgUrl} />
+          <MediaCard sx={{ width: 40 }} selectedItem={selectedItem} imgUrl={selectedItem.imgUrl} 
+          dDay={props.dDay} date={props.date}
+          />
         </div>
       </InfoWindow>
     </Map>

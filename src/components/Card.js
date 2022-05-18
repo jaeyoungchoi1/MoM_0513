@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
+import Stack from '@mui/material/Stack';
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from '@mui/styles';
+import { firestore } from "../firebase";
+
 
 const useStyles = makeStyles({
   card: {
@@ -20,43 +23,64 @@ const useStyles = makeStyles({
     }
   },
   media: {
-    height:180,
+    height:200,
     width: 400,
     objectFit: "cover"
   },
   content: {
     textAlign: "center",
+    
+    fontFamily: 'Gowun Batang',
   },
   divider: {
   },
   heading: {
+    marginTop: 2,
     fontWeight: "bold",
-    fontSize: 20
+    fontSize: 23,
+    
   },
   subheading: {
     lineHeight: 1.8
   },
   action : {
+  },
+  button : {
+    alignItems: "center",
+    fontFamily: 'Gowun Batang',
+  },
+  info : {
+    direction: "row",
+    spacing : 2
   }
 });
 
-const getDday = (date) => {
-  const Dday = new Date(2022, 1, 11);
-  const gap = date.getTime() - Dday.getTime();
-  return Math.floor(gap / (1000 * 60 * 60 * 24)) * -1;
-}
 
 const MediaCard = (props) => {
   const classes = useStyles();
   const item = props.selectedItem;
+/*
+  const [dDay, setDDay] = useState();
+
+  
+  const getDday = (date) => {
+    const Dday = new Date("Jan 11, 2022");
+    const gap = item.date - Dday;
+    
+    console.log(Math.floor(gap / (1000 * 60 * 60 * 24)) * -1);
+    return Math.floor(gap / (1000 * 60 * 60 * 24)) * -1;
+  }
 
   useEffect(() => {
-    console.log(item.date);
-    const Dday = new Date(2022, 1, 11);
-    const gap = item.date.getTime() - Dday.getTime();
-    console.log(Math.floor(gap / (1000 * 60 * 60 * 24)) * -1);
+    console.log(item.date.toDate());
+    const Dday = new Date("Jan 11, 2022");
+    const gap = item.date - Dday;
+    setDDay(Math.floor(gap / (1000 * 60 * 60 * 24)) * -1);
   }, []);
-
+*/
+  const show = (e, item) => {
+    console.log(item.name);
+  };
 
   return (
     <Card className={classes.card}>
@@ -64,7 +88,7 @@ const MediaCard = (props) => {
       <CardMedia
       className={classes.media}
         component="img"
-        src={props.imgUrl}
+        src={item.imgUrl}
       />
       <CardContent className={classes.content}>
 
@@ -75,19 +99,21 @@ const MediaCard = (props) => {
           {item.name}
         </Typography>
         
-        <Typography
-            className={classes.subheading}
-            variant={"caption"}
-          >
-            We are going to learn different kinds of species in nature that live
-            together to form amazing environment.
+        <Stack className={classes.info}>
+          <Typography style={{display: 'inline-block'}}>
+          💕+{props.dDay}
           </Typography>
-      {console.log(item.date)}
+          <Typography style={{display: 'inline-block'}}>
+          {props.dDay}
+          </Typography>
+        </Stack>
+
       </CardContent>
-      <CardActions>
-        <Button size="small">lll</Button>
-        <Button size="small">Learn More</Button>
-      </CardActions>
+      {/*<CardActions className={classes.button}>
+        <Button >D+{props.dDay}</Button>
+        <Button >Learn More</Button>
+      </CardActions>*/
+  }
     </Card>
   );
 };

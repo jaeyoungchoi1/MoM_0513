@@ -59,7 +59,7 @@ const BottomDrawer = (props) => {
 
   const [input, setInput] = useState("");
   const [file, setFile] = useState("");
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState(null);
   //const [selected, setSelected] = useState();
   const [inputPlace, setInputPlace] = useState();
   const [lat, setLat] = useState(37.5);
@@ -95,9 +95,9 @@ const BottomDrawer = (props) => {
 
   const addPlace = async (event) => {
     event.preventDefault();
-    let attachmentUrl = "";
+    let attachmentUrl = null;
 
-    if (attachment !== "") {
+    if (attachment !== null) {
       const attachmentRef = firestorage.ref().child("image/" + file);
       const response = await attachmentRef.putString(attachment, "data_url");
       attachmentUrl = await response.ref.getDownloadURL();
@@ -112,7 +112,7 @@ const BottomDrawer = (props) => {
 
     setInput("");
     setFile("");
-    setAttachment();
+    setAttachment(null);
     setLat(37.5);
     setLng(127);
     setInputPlace();
@@ -251,7 +251,7 @@ const BottomDrawer = (props) => {
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button
-            disabled={!input} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
+            disabled={!input||!inputPlace} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
             type="submit"
             variant="contained"
             color="primary"

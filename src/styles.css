@@ -1,4 +1,7 @@
 /* overides*/
+
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
+
 html,
 body {
   margin: 0;
@@ -6,6 +9,8 @@ body {
 .App {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+
+  font-family: 'Gowun Batang', serif;
 }
 .App::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
