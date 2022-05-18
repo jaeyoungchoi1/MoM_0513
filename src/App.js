@@ -37,11 +37,12 @@ const App = () => {
     //const gap = selectedItem.date.getTime() - Dday.getTime();
     
     //console.log(Math.floor(gap / (1000 * 60 * 60 * 24)) * -1);
+    console.log(selectedItem.date.seconds);
     console.log(Math.ceil((selectedItem.date.seconds-1644246000)/(60*60*24)));
   };
 
   useEffect(() => {
-    fireData.onSnapshot((snapshot) => {
+    fireData.orderBy("date").onSnapshot((snapshot) => {
       setInfos(
         snapshot.docs.map((doc) => ({
           id: doc.id,

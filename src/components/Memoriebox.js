@@ -36,7 +36,7 @@ const style = {
   };
 
 const Memoriebox = (props) => {
-  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [input, setInput] = useState();
 
   const updateInfo = () => {
@@ -46,12 +46,12 @@ const Memoriebox = (props) => {
       },
       { merge: true }
     );
-    setOpen(false);
+    setModalOpen(false);
   };
 
   return (
       <>
-        <Modal open={open} onClose={(e) => setOpen(false)}>
+        <Modal open={modalOpen} onClose={(e) => setModalOpen(false)}>
             <Box sx = {style} >
                 <h1>fix it!</h1>
                 <Input
@@ -60,7 +60,7 @@ const Memoriebox = (props) => {
                 onChange={(event) => setInput(event.target.value)}
                 />
                 <Button onClick={(e) => updateInfo()}>update</Button>
-                <Button onClick={(e)=>setOpen(false)}>닫기</Button>
+                <Button onClick={(e)=>setModalOpen(false)}>닫기</Button>
             </Box>
         </Modal>
         <List className="todolist-entry">
@@ -71,7 +71,7 @@ const Memoriebox = (props) => {
                 secondary="마감 기한"
             ></ListItemText>
             </ListItem>
-            <Button className="update-button" onClick={(e) => setOpen(true)}>
+            <Button className="update-button" onClick={(e) => setModalOpen(true)}>
             수정
             </Button>
         </List>

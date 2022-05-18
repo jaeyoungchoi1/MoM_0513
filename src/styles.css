@@ -2,6 +2,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap');
 
+*{
+  font-family: 'Gowun Batang', serif !important;
+}
+
 html,
 body {
   margin: 0;
@@ -25,17 +29,23 @@ body {
     /*padding: 30px !important;*/
   
 }
+.gm-style{
+  border-radius: 10 !important;
+  
+}
 .gm-style-iw{
   padding: 0 !important;
-  border-radius: 10 !important;
+  
   font-weight: 0 !important;
   background: linear-gradient(#eacee0 0%, #fffdeb 100%) !important;
+  background: #F9F3EE !important;
 }
 .gm-style-iw-d {
   overflow: hidden !important;
 }
 .gm-style-iw-t::after {
   background: #fffdeb !important;
+  background: #F9F3EE !important;
 }
 .gm-ui-hover-effect{
   position: fixed !important;
@@ -54,6 +64,7 @@ body {
       width: 30px;
       height: 30px;
       z-index:10;
+      color:#fffdeb;
 }
 .drawer__content {
   padding: 0 !important;

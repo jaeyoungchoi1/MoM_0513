@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Card from "@mui/material/Card";
+import {Card, Box
+} from "@mui/material";
 import Stack from '@mui/material/Stack';
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -8,6 +9,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from '@mui/styles';
 import { firestore } from "../firebase";
+import { borderRadius } from "@mui/system";
+import defaultImage from '../image/default.png'
 
 
 const useStyles = makeStyles({
@@ -23,21 +26,37 @@ const useStyles = makeStyles({
     }
   },
   media: {
-    height:200,
-    width: 400,
+    width:275,
+    height:180,
     objectFit: "cover"
   },
   content: {
-    textAlign: "center",
-    
-    fontFamily: 'Gowun Batang',
+
+    marginTop:-3,
+    position: "relative", 
+    padding: 20, 
+    height: 80,
+    fontFamily: "'Gowun Batang', serif",
   },
   divider: {
   },
+  dDay: {
+    position: "absolute",
+  left: "0",
+  top: "-25px",
+  height: "25px",
+  padding: "0 15px",
+  color: "#FFF",
+  fontSize: "11px",
+  lineHeight: "25px",
+  textTransform: "uppercase",
+  backgroundColor: "#97C4B8",
+  borderTopLeftRadius:"5px",
+  borderTopRightRadius:"5px"
+  },
   heading: {
-    marginTop: 2,
     fontWeight: "bold",
-    fontSize: 23,
+    fontSize: 15,
     
   },
   subheading: {
@@ -47,11 +66,32 @@ const useStyles = makeStyles({
   },
   button : {
     alignItems: "center",
-    fontFamily: 'Gowun Batang',
+    fontFamily: "'Gowun Batang', serif",
+  },
+  
+  x : {
+    position: "absolute",
+    top: "4px",
+    right: "4.5px",
+    width: "25px",
+    height: "25px",
+    color: "#FFF",
+    //lineHeight: "13px",
+    backgroundColor: "white",
+    opacity:"40%",
+    borderRadius: "50%"
+  },
+  cardfooter : {
+    position: "absolute",
+  bottom: "20px",
+  left: "20px",
+  right: "20px",
+  fontSize: "11px",
+  color: "#A3A9AB",
   },
   info : {
-    direction: "row",
-    spacing : 2
+    margin:0,
+    display: 'inline-block'
   }
 });
 
@@ -84,14 +124,18 @@ const MediaCard = (props) => {
 
   return (
     <Card className={classes.card}>
+
+      <Box className={classes.x} />
       
       <CardMedia
       className={classes.media}
         component="img"
-        src={item.imgUrl}
+        src={item.imgUrl?item.imgUrl:defaultImage}
       />
       <CardContent className={classes.content}>
-
+    <Box className={classes.dDay}>
+    💕{props.dDay>=0?" +":" "}{props.dDay}
+    </Box>
       <Typography 
         className={classes.heading}
         gutterBottom 
@@ -99,11 +143,11 @@ const MediaCard = (props) => {
           {item.name}
         </Typography>
         
-        <Stack className={classes.info}>
-          <Typography style={{display: 'inline-block'}}>
+        <Stack className={classes.cardfooter}>
+          <Typography className={classes.info}>
           💕+{props.dDay}
           </Typography>
-          <Typography style={{display: 'inline-block'}}>
+          <Typography className={classes.info}>
           {props.dDay}
           </Typography>
         </Stack>

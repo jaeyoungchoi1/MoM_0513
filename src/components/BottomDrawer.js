@@ -19,7 +19,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField
+  TextField,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActionArea,
+  CardActions
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { firestorage, firestore } from "../firebase";
@@ -37,12 +42,14 @@ import Memoriebox from "./Memoriebox";
 import SearchBar from "./SearchBar";
 import Autocomplete, {usePlacesWidget} from "react-google-autocomplete";
 import { Opacity } from "@material-ui/icons";
-import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import "../styles.css";
 import { CenterFocusStrong } from "@mui/icons-material";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
+import defaultImage from '../image/default.png'
 
 React.useLayoutEffect = React.useEffect;
 
@@ -54,7 +61,15 @@ const BottomDrawer = (props) => {
 
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {setOpen(true);};
-  const handleClose = () => {setOpen(false);};
+  const handleClose = () => {
+    setInput("");
+    setFile("");
+    setAttachment(null);
+    setInputPlace();
+    setPlaceName();
+    setDate(new Date());
+    setOpen(false);
+  };
 
 
   const [input, setInput] = useState("");
@@ -62,36 +77,13 @@ const BottomDrawer = (props) => {
   const [attachment, setAttachment] = useState(null);
   //const [selected, setSelected] = useState();
   const [inputPlace, setInputPlace] = useState();
-  const [lat, setLat] = useState(37.5);
-  const [lng, setLng] = useState(127);
+  const [placeName, setPlaceName] = useState();
 
   const [date, setDate] = React.useState(new Date());
   const handleChange = (newValue) => {
     setDate(newValue);
   };
 
-  const save = (e) => {
-    setDoc(
-      doc(firestore, "places", "3"),
-      {
-        name: "3",
-        position: "ddd",
-      },
-      { merge: true }
-    );
-
-    /*
-    firestore.collection("places").addDoc({
-      name: "3",
-      location: "ddd"
-    })
-    .then((docRef) => {
-      console.log("가능", docRef.id);
-    })
-    .catch((error) => {
-      console.log("안됨", error);
-    });*/
-  };
 
   const addPlace = async (event) => {
     event.preventDefault();
@@ -108,15 +100,15 @@ const BottomDrawer = (props) => {
       position: { latitude: inputPlace.geometry.location.lat(), longitude: inputPlace.geometry.location.lng() },
       imgUrl: attachmentUrl,
       date: date,
+      placeName: placeName,
     });
 
     setInput("");
     setFile("");
     setAttachment(null);
-    setLat(37.5);
-    setLng(127);
     setInputPlace();
-    setDate(new Date())
+    setPlaceName();
+    setDate(new Date());
   };
 
   const onClearAttachment = () => {
@@ -136,6 +128,10 @@ const BottomDrawer = (props) => {
   });
 
 
+  const photoInput = useRef(null);
+  const handleClick = () => {
+    photoInput.current.click();
+  };
 
 
   return (
@@ -155,22 +151,22 @@ const BottomDrawer = (props) => {
   </center>*/}
         <Fab
           onClick={handleClickOpen}
-          color="secondary"
           aria-label="favorite"
-          sx={{ position: "absolute", bottom: 16, right: 16, zIndex:5 }}
+          sx={{ background: "#F9CEEE", position: "absolute", bottom: 16, right: 16, zIndex:5 }}
         >
-          <FavoriteTwoToneIcon />
+          <FavoriteBorderOutlinedIcon sx={{color:"#fff"}}/>
         </Fab>
 
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle sx={{textAlign:"center"}}>새로운 추억</DialogTitle>
-          <DialogContent>
-          <DialogContentText>
-          </DialogContentText>
-            <TextField
+        <Dialog 
+          PaperProps={{ sx: { background: "#CCF3EE", borderRadius:"10px" } }}
+        open={open} onClose={handleClose}>
+          <DialogTitle sx={{textAlign:"center", fontFamily: "'Gowun Batang', serif"}}>새로운 추억</DialogTitle>
+          <DialogContent className="dialogContainer" sx={{display:"flex", height:"200px", maxWidth:"350px", justifyContent:"space-between"}}>
+            <Box sx={{display:"flex", flexDirection:"column", justifyContent:"space-around"}}>
+            <Input 
               autoFocus
               margin="dense"
-              label="추억의 이름"
+              placeholder="어떤 추억인가요?"
               fullWidth
               variant="standard"
               value={input}
@@ -182,85 +178,106 @@ const BottomDrawer = (props) => {
             <Input
                 fullWidth
                 color="secondary"
-                placeholder={inputPlace?inputPlace.formatted_address:null}
+                placeholder={inputPlace?placeName:null}
                 inputComponent={({ inputRef, onFocus, onBlur, ...props }) => (
                   <Autocomplete
+                  
                     apiKey={"AIzaSyBU-hDVtV5lNXc4jsnr0AIaUAUcMylVhpY"}
                     {...props}
                     onPlaceSelected={(selected) => {
                       setInputPlace(selected)
-                      const selectedLat = selected.geometry.location.lat();
-                      const selectedLng = selected.geometry.location.lng();
-                      setLat(selectedLat);
-                      setLng(selectedLng);
-                      console.log(selected, selectedLat, selectedLng, lat, lng);
+                      setPlaceName(selected.name)
+                      console.log(selected);
                     }}
                     options={{
                       types: [],
+                      fields: ["place_id", "geometry", "name"],
                       componentRestrictions: { country: "KR" },
                     }}
                   />
                 )}
               />
 
-            <Input
-              fullWidth
-              type="file"
-              value={file}
-              onChange={(event) => {
-                const {
-                  target: { files, value },
-                } = event;
-                const theFile = files[0];
-                const reader = new FileReader();
-                setFile(value);
-                reader.onloadend = (finishedEvent) => {
-                  const {
-                    currentTarget: { result },
-                  } = finishedEvent;
-                  setAttachment(result);
-                };
-                reader.readAsDataURL(theFile);
-              }}
-            />
-            {attachment && (
-              <div>
-                <img
-                  src={attachment}
-                  width="50px"
-                  height="50px"
-                  alt="attachment"
-                />
-                <button onClick={onClearAttachment}>Clear</button>
-              </div>
-            )}
-
             <LocalizationProvider dateAdapter={AdapterDateFns} 
                   >
                 <MobileDatePicker
+                sx={{fontFamily: "'Gowun Batang', serif"}}
                   variant="standard"
-                  label="pick date"
+                  //label="pick date"
                   inputFormat="MM/dd/yyyy"
                   value={date}
                   onChange={handleChange}
                   renderInput={(params) => <TextField {...params} variant="standard"/>}
                 />
             </LocalizationProvider>
+            </Box>
+
+            <Box sx={{display:"flex", width:"50px", alignItems:"center", marginLeft:"20px", marginRight:"10px"}}>
+            {!attachment&&(
+            <Button sx={{height:"50px", background:"#97C4B8", color:"#fff", '&:hover': {
+              background: "#5b887c",}}}
+            onClick={handleClick}>
+              <AddPhotoAlternateOutlinedIcon sx={{fontSize:"medium"}}/>
+            </Button>
+            )
+            }
+
+                <input
+                  style={{display:"none"}}
+                  ref={photoInput}
+                  type="file"
+                  value={file}
+                  onChange={(event) => {
+                    const {
+                      target: { files, value },
+                    } = event;
+                    const theFile = files[0];
+                    const reader = new FileReader();
+                    setFile(value);
+                    reader.onloadend = (finishedEvent) => {
+                      const {
+                        currentTarget: { result },
+                      } = finishedEvent;
+                      setAttachment(result);
+                    };
+                    reader.readAsDataURL(theFile);
+                  }}
+                />
+                {attachment && (
+                  <Box>
+                    <img
+                      src={attachment}
+                      width="65px"
+                      height="65px"
+                      alt="attachment"
+                      objectFit= "cover"
+                    />
+                    <Button sx={{background:"#97C4B8", color:"#fff", '&:hover': {
+                  background: "#5b887c",}}}
+                    onClick={onClearAttachment}>Clear</Button>
+                  </Box>
+                )}
+            </Box>
+            
                 
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button sx={{color:"black"}}onClick={handleClose}>Cancel</Button>
             <Button
             disabled={!input||!inputPlace} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
             type="submit"
             variant="contained"
-            color="primary"
+            sx={{background:"#97C4B8", '&:hover': {
+              background: "#5b887c",
+           },}}
+            
             onClick={(event)=>{addPlace(event); handleClose();}}
           >
             add
           </Button>
           </DialogActions>
         </Dialog>
+
 
       
       <img className="arrow-button"
@@ -295,9 +312,40 @@ const BottomDrawer = (props) => {
 
           
 
-          <ul>
+          <List sx={{marginLeft:"15px", marginRight:"15px"}}>
             {props.infos.map((info, index) => (
               <>
+                <Card height="100" sx={{borderRadius:"15px", marginBottom:"10px"}}>
+                  <CardActionArea onClick={(e) => {
+                    closeDrawer();
+                    props.onClick(e, info);
+                    
+                  }}>
+                    <CardMedia component="img" height="100" image={info.imgUrl?info.imgUrl:defaultImage} sx={{filter:"brightness(80%)"}}/>
+                    <CardContent sx={{ p:0, '&:last-child': { pb: 0 }}}>
+                      <Box sx={{position:"absolute", top:"37px", left:"10px", color:"#fff", fontWeight: "bold",
+    fontSize: 20,}}>
+                        # {index+1}
+                      </Box>
+                      <Box sx={{position:"absolute", top:"30px", left:"60px", color:"#fff", fontWeight: "bold",
+    fontSize: 20,}}>
+                        {info.name}
+                      </Box>
+                      <Box sx={{position:"absolute", top:"30px", right:"40px", color:"#fff", fontWeight: "bold",
+    fontSize: 20,}}>
+                        {Math.ceil((info.date.seconds-1644246000)/(60*60*24))}
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions sx={{p:0}}>
+                  <Button className="update-button" sx={{position:"absolute", top:"30px",left:"30px"}} >
+                    수정
+                  </Button>
+                  </CardActions>
+                  
+                </Card>
+
+                {/*
                 <Typography
                   sx={{ p: 2, color: "text.secondary" }}
                   key={index}
@@ -309,20 +357,18 @@ const BottomDrawer = (props) => {
                 >
                   {info.name}
                 </Typography>
-                <Memoriebox info={info} onClick={props.onClick} />
+                <Memoriebox info={info} onClick={(e) => {
+                    closeDrawer();
+                    props.onClick(e, info);
+                    
+                  }} />
+
+                  */
+                }
               </>
             ))}
-          </ul>
-
-          <List>
-            {props.infos.map((info, index) => {
-              return (
-                <ListItem key={index}>
-                  <ListItemText>{info.name}</ListItemText>
-                </ListItem>
-              );
-            })}
           </List>
+
         </div>
       </Drawer>
     </div>
