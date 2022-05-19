@@ -50,6 +50,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import defaultImage from '../image/default.png'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 React.useLayoutEffect = React.useEffect;
 
@@ -79,7 +81,7 @@ const BottomDrawer = (props) => {
   const [inputPlace, setInputPlace] = useState();
   const [placeName, setPlaceName] = useState();
 
-  const [date, setDate] = React.useState(new Date());
+  const [date, setDate] = useState(new Date());
   const handleChange = (newValue) => {
     setDate(newValue);
   };
@@ -111,6 +113,23 @@ const BottomDrawer = (props) => {
     setDate(new Date());
   };
 
+  const updateInfo = () => {
+    firestore.collection("places").doc(props.info.id).set(
+      {
+      name: input,
+      position: { latitude: inputPlace.geometry.location.lat(), longitude: inputPlace.geometry.location.lng() },
+      date: date,
+      placeName: placeName,
+      },
+      { merge: true }
+    );
+    setInput("");
+    setInputPlace();
+    setPlaceName();
+    setDate(new Date());
+    setModalOpen(false);
+  };
+
   const onClearAttachment = () => {
     setAttachment(null);
     setFile("");
@@ -132,6 +151,18 @@ const BottomDrawer = (props) => {
   const handleClick = () => {
     photoInput.current.click();
   };
+
+
+
+
+
+
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editInput, setEditInput] = useState();
+  const [editInputPlace, setEditInputPlace] = useState();
+  const [editPlaceName, setEditPlaceName] = useState();
+  const [editDate, setEditDate] = React.useState(new Date());
 
 
   return (
@@ -310,61 +341,24 @@ const BottomDrawer = (props) => {
             })*/}
           </ul>
 
+
+
+          
           
 
-          <List sx={{marginLeft:"15px", marginRight:"15px"}}>
+          <List sx={{marginLeft:"10px", marginRight:"10px"}}>
             {props.infos.map((info, index) => (
               <>
-                <Card height="100" sx={{borderRadius:"15px", marginBottom:"10px"}}>
-                  <CardActionArea onClick={(e) => {
+              <Memoriebox info={info} index={index} onClick={(e) => {
                     closeDrawer();
                     props.onClick(e, info);
                     
-                  }}>
-                    <CardMedia component="img" height="100" image={info.imgUrl?info.imgUrl:defaultImage} sx={{filter:"brightness(80%)"}}/>
-                    <CardContent sx={{ p:0, '&:last-child': { pb: 0 }}}>
-                      <Box sx={{position:"absolute", top:"37px", left:"10px", color:"#fff", fontWeight: "bold",
-    fontSize: 20,}}>
-                        # {index+1}
-                      </Box>
-                      <Box sx={{position:"absolute", top:"30px", left:"60px", color:"#fff", fontWeight: "bold",
-    fontSize: 20,}}>
-                        {info.name}
-                      </Box>
-                      <Box sx={{position:"absolute", top:"30px", right:"40px", color:"#fff", fontWeight: "bold",
-    fontSize: 20,}}>
-                        {Math.ceil((info.date.seconds-1644246000)/(60*60*24))}
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
-                  <CardActions sx={{p:0}}>
-                  <Button className="update-button" sx={{position:"absolute", top:"30px",left:"30px"}} >
-                    수정
-                  </Button>
-                  </CardActions>
+                  }}/>
+        
+
+                
                   
-                </Card>
-
-                {/*
-                <Typography
-                  sx={{ p: 2, color: "text.secondary" }}
-                  key={index}
-                  onClick={(e) => {
-                    closeDrawer();
-                    props.onClick(e, info);
-                    
-                  }}
-                >
-                  {info.name}
-                </Typography>
-                <Memoriebox info={info} onClick={(e) => {
-                    closeDrawer();
-                    props.onClick(e, info);
-                    
-                  }} />
-
-                  */
-                }
+                
               </>
             ))}
           </List>

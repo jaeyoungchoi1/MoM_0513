@@ -8,7 +8,12 @@ import {
     ListItem,
     ListItemText,
     Input,
-    Button
+    Button,
+    Card,
+    CardMedia,
+    CardContent,
+    CardActionArea,
+    CardActions
 } from "@mui/material"
 import { firestore } from "../firebase";
 import {
@@ -20,8 +25,10 @@ import {
   Timestamp,
   updateDoc,
 } from "@firebase/firestore";
-
+import defaultImage from '../image/default.png'
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const style = {
     position: 'absolute',
@@ -37,12 +44,15 @@ const style = {
 
 const Memoriebox = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [input, setInput] = useState();
+  const [editName, setEditName] = useState();
+  const info = props.info;
+  const index = props.index;
+  const onClick = props.onClick;
 
   const updateInfo = () => {
     firestore.collection("places").doc(props.info.id).set(
       {
-        name: input,
+        name: editName,
       },
       { merge: true }
     );
@@ -51,37 +61,48 @@ const Memoriebox = (props) => {
 
   return (
       <>
+      <Card height="100" sx={{borderRadius:"10px", marginBottom:"8px"}}>
+                  <CardActionArea onClick={onClick}>
+                    <CardMedia component="img"  height="100" image={info.imgUrl?info.imgUrl:defaultImage} sx={{filter:"brightness(80%)"}}/>
+                    <CardContent  sx={{ width:'100%', p:"20px", '&:last-child': { pb: 0 }, position:"absolute", 
+                    top:"14px", display:"flex", flexDirection:"row", color:"#fff", alignItems:"center",
+                    fontWeight: "bold", fontSize:"13px", justifyContent:"space-between"}}>
+                      <Box sx={{width:50}}>
+                        # {index+1}
+                      </Box>
+                      <Box sx={{width:300,display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                        <Box>{info.name}</Box>
+                        <Box sx={{fontWeight:"normal", fontSize:"10px"}}>{info.toDate}</Box>
+                      </Box>
+                      <Box sx={{width:100}}>
+                        💕{info.dDay>=0?" +":" "}{info.dDay}
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions sx={{ p:"0px", '&:last-child': { pb: 0 },float:"right", background:"#F9F3EE"}}>
+                    <Button sx={{ minWidth:"1px", opacity:"50%"}} onClick={(e) => setModalOpen(true)}>
+                      <EditIcon color="action" fontSize="small"/>
+                    </Button>
+                    <Button sx={{ minWidth:"1px", opacity:"50%"}}>
+                      <DeleteIcon color="action" fontSize="small" onClick={(event) =>
+            firestore.collection("places").doc(props.info.id).delete()
+            }/>
+                    </Button>
+                  </CardActions>
+                </Card>
         <Modal open={modalOpen} onClose={(e) => setModalOpen(false)}>
             <Box sx = {style} >
-                <h1>fix it!</h1>
+                <h1>수정하기</h1>
                 <Input
                 placeholder={props.info.name}
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
+                value={editName}
+                onChange={(event) => setEditName(event.target.value)}
                 />
                 <Button onClick={(e) => updateInfo()}>update</Button>
                 <Button onClick={(e)=>setModalOpen(false)}>닫기</Button>
             </Box>
         </Modal>
-        <List className="todolist-entry">
-            <ListItem className="todo-inputbox">
-
-            <ListItemText
-                primary={props.info.name}
-                secondary="마감 기한"
-            ></ListItemText>
-            </ListItem>
-            <Button className="update-button" onClick={(e) => setModalOpen(true)}>
-            수정
-            </Button>
-        </List>
-        <div className="delete-button">
-        <DeleteForeverIcon
-            onClick={(event) =>
-            firestore.collection("places").doc(props.info.id).delete()
-            }
-        />
-        </div>
+        
       </>
       
   );

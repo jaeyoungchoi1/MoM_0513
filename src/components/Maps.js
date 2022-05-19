@@ -107,8 +107,7 @@ const MapContainer = (props) => {
         }}
       >
         <div>
-          <MediaCard  selectedItem={selectedItem} imgUrl={selectedItem.imgUrl} 
-          dDay={props.dDay} date={props.date}
+          <MediaCard  selectedItem={selectedItem}
           />
         </div>
       </InfoWindow>

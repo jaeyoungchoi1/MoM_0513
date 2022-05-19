@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Card, Box
+import {Card, Box, Grid
 } from "@mui/material";
 import Stack from '@mui/material/Stack';
 import CardActions from "@mui/material/CardActions";
@@ -10,7 +10,8 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from '@mui/styles';
 import { firestore } from "../firebase";
 import { borderRadius } from "@mui/system";
-import defaultImage from '../image/default.png'
+import defaultImage from '../image/default.png';
+import RoomOutlinedIcon from '@mui/icons-material/RoomOutlined';
 
 
 const useStyles = makeStyles({
@@ -92,7 +93,17 @@ const useStyles = makeStyles({
   info : {
     margin:0,
     display: 'inline-block'
+  },
+  placeinfo : {
+    alignItems: "center",
+    display: "flex",
+    margin:0,
+    display: 'inline-block',
+    float:"right",
+    whiteSpace:"nowrap",
+    //transform: "rotate(180deg)"
   }
+
 });
 
 
@@ -134,7 +145,7 @@ const MediaCard = (props) => {
       />
       <CardContent className={classes.content}>
     <Box className={classes.dDay}>
-    💕{props.dDay>=0?" +":" "}{props.dDay}
+    💕{item.dDay>=0?" +":" "}{item.dDay}
     </Box>
       <Typography 
         className={classes.heading}
@@ -145,11 +156,14 @@ const MediaCard = (props) => {
         
         <Stack className={classes.cardfooter}>
           <Typography className={classes.info}>
-          💕+{props.dDay}
+          {item.toDate}
           </Typography>
-          <Typography className={classes.info}>
-          {props.dDay}
-          </Typography>
+
+          
+            <Typography className={classes.placeinfo}>
+            {item.placeName}
+            </Typography>
+          
         </Stack>
 
       </CardContent>
