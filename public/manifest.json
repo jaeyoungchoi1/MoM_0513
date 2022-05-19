@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Memories",
+  "name": "Memories",
   "icons": [
     {
       "src": "/icons/apple-icon-57x57.png",
@@ -54,7 +54,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "https://hawon-jaeyoung.netlify.app/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
