@@ -1,9 +1,8 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
 import BottomDrawer from "./components/BottomDrawer";
 import Maps from "./components/Maps";
 import { firestore } from "./firebase";
-import moment from "moment";
 
 React.useLayoutEffect = React.useEffect;
 
@@ -12,27 +11,24 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState({
     position: { latitude: 0, longitude: 0 },
   });
-  //const [selectedDate, setSelectedDate] = useState();
   const [infoWindow, setInfoWindow] = useState(false);
   const fireData = firestore.collection("places");
 
   const dts = (date) => {
-    var moment = require('moment');
-    const dateString = moment(date.toDate()).format('ll');
+    var moment = require("moment");
+    const dateString = moment(date.toDate()).format("ll");
 
     return dateString;
-  }
+  };
 
   const showInfo = (e, selectedItem) => {
     setInfoWindow(true);
     setSelectedItem(selectedItem);
 
-    //setSelectedDday(Math.ceil((selectedItem.date.seconds-1644246000)/(60*60*24)));
-    //const gap = selectedItem.date.getTime() - Dday.getTime();
-    
-    //console.log(Math.floor(gap / (1000 * 60 * 60 * 24)) * -1);
     console.log(selectedItem.date.seconds);
-    console.log(Math.ceil((selectedItem.date.seconds-1644246000)/(60*60*24)));
+    console.log(
+      Math.ceil((selectedItem.date.seconds - 1644246000) / (60 * 60 * 24))
+    );
   };
 
   useEffect(() => {
@@ -44,8 +40,10 @@ const App = () => {
           position: doc.data().position,
           imgUrl: doc.data().imgUrl,
           date: doc.data().date,
-          dDay: Math.ceil((doc.data().date.seconds-1644246000)/(60*60*24)),
-          toDate : dts(doc.data().date),
+          dDay: Math.ceil(
+            (doc.data().date.seconds - 1644246000) / (60 * 60 * 24)
+          ),
+          toDate: dts(doc.data().date),
           placeName: doc.data().placeName,
         }))
       );

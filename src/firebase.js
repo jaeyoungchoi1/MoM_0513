@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "memories-re.appspot.com",
   messagingSenderId: "367834969081",
   appId: "1:367834969081:web:44a1a633ce5d47a1b04328",
-  measurementId: "G-DHKTVG12CZ"
+  measurementId: "G-DHKTVG12CZ",
 };
 
 // firebaseConfig 정보로 firebase 시작
