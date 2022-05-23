@@ -22,6 +22,8 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
+import imageCompression from "browser-image-compression";
+import  {v4 as uuidv4} from "uuid";
 
 React.useLayoutEffect = React.useEffect;
 
@@ -35,8 +37,7 @@ const BottomDrawer = (props) => {
     setOpen(true);
   };
   const handleClose = () => {
-    setInput("");
-    setFile("");
+    setName("");
     setAttachment(null);
     setInputPlace();
     setPlaceName();
@@ -44,13 +45,12 @@ const BottomDrawer = (props) => {
     setOpen(false);
   };
 
-  const [input, setInput] = useState("");
-  const [file, setFile] = useState("");
+  const [name, setName] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [inputPlace, setInputPlace] = useState();
   const [placeName, setPlaceName] = useState();
-
   const [date, setDate] = useState(new Date());
+
   const handleChange = (newValue) => {
     setDate(newValue);
   };
@@ -60,13 +60,13 @@ const BottomDrawer = (props) => {
     let attachmentUrl = null;
 
     if (attachment !== null) {
-      const attachmentRef = firestorage.ref().child("image/" + file);
+      const attachmentRef = firestorage.ref().child("image/" + uuidv4());
       const response = await attachmentRef.putString(attachment, "data_url");
       attachmentUrl = await response.ref.getDownloadURL();
     }
 
     await firestore.collection("places").add({
-      name: input,
+      name: name,
       position: {
         latitude: inputPlace.geometry.location.lat(),
         longitude: inputPlace.geometry.location.lng(),
@@ -76,8 +76,7 @@ const BottomDrawer = (props) => {
       placeName: placeName,
     });
 
-    setInput("");
-    setFile("");
+    setName("");
     setAttachment(null);
     setInputPlace();
     setPlaceName();
@@ -86,12 +85,16 @@ const BottomDrawer = (props) => {
 
   const onClearAttachment = () => {
     setAttachment(null);
-    setFile("");
   };
 
   const photoInput = useRef(null);
   const handleClick = () => {
     photoInput.current.click();
+  };
+
+  const options = {
+    maxSizeMB: 0.4,
+    maxWidth: 700,
   };
 
   return (
@@ -142,9 +145,9 @@ const BottomDrawer = (props) => {
               placeholder="어떤 추억인가요?"
               fullWidth
               variant="standard"
-              value={input}
+              value={name}
               onChange={(event) => {
-                setInput(event.target.value);
+                setName(event.target.value);
               }}
             />
 
@@ -214,21 +217,17 @@ const BottomDrawer = (props) => {
               style={{ display: "none" }}
               ref={photoInput}
               type="file"
-              value={file}
-              onChange={(event) => {
-                const {
-                  target: { files, value },
-                } = event;
-                const theFile = files[0];
+              onChange={async (event) => {
+                const theFile = event.target.files[0];
+                const compressedFile = await imageCompression(theFile, options);
                 const reader = new FileReader();
-                setFile(value);
+                reader.readAsDataURL(compressedFile);
                 reader.onloadend = (finishedEvent) => {
                   const {
                     currentTarget: { result },
                   } = finishedEvent;
                   setAttachment(result);
                 };
-                reader.readAsDataURL(theFile);
               }}
             />
             {attachment && (
@@ -261,7 +260,7 @@ const BottomDrawer = (props) => {
             Cancel
           </Button>
           <Button
-            disabled={!input || !inputPlace} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
+            disabled={!name || !inputPlace} //! 인풋값이 없을 경우 기능이 작동하지 않도록!
             type="submit"
             variant="contained"
             sx={{

@@ -44,8 +44,8 @@ const MapContainer = (props) => {
         lng: initLng,
       }}
       center={{
-        lat: initLat,
-        lng: initLng,
+        lat: selectedItem.position.latitude,
+        lng: selectedItem.position.longitude,
       }}
       disableDefaultUI={true}
       fullscreenControl={false}

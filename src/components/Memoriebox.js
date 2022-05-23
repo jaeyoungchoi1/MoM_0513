@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Modal,
   Box,
@@ -14,6 +14,7 @@ import {
   CardContent,
   CardActionArea,
   CardActions,
+  TextField,
 } from "@mui/material";
 import { firestore } from "../firebase";
 import {
@@ -30,6 +31,17 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import Autocomplete from "react-google-autocomplete";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import "../styles.css";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
+import imageCompression from "browser-image-compression";
+
+
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -43,21 +55,39 @@ const style = {
 };
 
 const Memoriebox = (props) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editName, setEditName] = useState();
+  
   const info = props.info;
   const index = props.index;
   const onClick = props.onClick;
+  const [modalOpen, setModalOpen] = useState(false);
+  const [name, setName] = useState(info.name);
+  const [attachment, setAttachment] = useState(info.imgUrl);
+  const [inputPlace, setInputPlace] = useState();
+  const [placeName, setPlaceName] = useState(info.placeName);
+  const [date, setDate] = useState(info.date);
 
   const updateInfo = () => {
     firestore.collection("places").doc(props.info.id).set(
       {
-        name: editName,
+        name: name,
       },
       { merge: true }
     );
     setModalOpen(false);
   };
+
+  const handleChange = (newValue) => {
+    setDate(newValue);
+  };
+
+  const photoInput = useRef(null);
+  const handleClick = () => {
+    photoInput.current.click();
+  };
+  const onClearAttachment = () => {
+    setAttachment(null);
+  };
+
 
   return (
     <>
@@ -134,10 +164,99 @@ const Memoriebox = (props) => {
         <Box sx={style}>
           <h1>수정하기</h1>
           <Input
-            placeholder={props.info.name}
-            value={editName}
-            onChange={(event) => setEditName(event.target.value)}
+            autoFocus
+            margin="dense"
+            placeholder="어떤 추억인가요?"
+            fullWidth
+            variant="standard"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
+{/*
+            <Input
+              fullWidth
+              color="secondary"
+              placeholder={placeName}
+              inputComponent={({ inputRef, onFocus, onBlur, ...props }) => (
+                <Autocomplete
+                  apiKey={"AIzaSyBU-hDVtV5lNXc4jsnr0AIaUAUcMylVhpY"}
+                  {...props}
+                  onPlaceSelected={(selected) => {
+                    setPlaceName(selected.name);
+                    console.log(selected);
+                  }}
+                  options={{
+                    types: [],
+                    fields: ["place_id", "geometry", "name"],
+                    componentRestrictions: { country: "KR" },
+                  }}
+                />
+              )}
+            />
+
+            
+            {!attachment && (
+              <Button
+                sx={{
+                  height: "50px",
+                  background: "#97C4B8",
+                  color: "#fff",
+                  "&:hover": {
+                    background: "#5b887c",
+                  },
+                }}
+                onClick={handleClick}
+              >
+                <AddPhotoAlternateOutlinedIcon sx={{ fontSize: "medium" }} />
+              </Button>
+            )}
+
+            <input
+              style={{ display: "none" }}
+              ref={photoInput}
+              type="file"
+              onChange={async (event) => {
+                const theFile = event.target.files[0];
+                const compressedFile = await imageCompression(theFile, options);
+                const reader = new FileReader();
+                reader.readAsDataURL(compressedFile);
+                reader.onloadend = (finishedEvent) => {
+                  const {
+                    currentTarget: { result },
+                  } = finishedEvent;
+                  setAttachment(result);
+                };
+              }}
+            />
+            {attachment && (
+              <Box>
+                <img
+                  src={attachment}
+                  width="65px"
+                  height="65px"
+                  alt="attachment"
+                  objectFit="cover"
+                />
+                <Button
+                  sx={{
+                    background: "#97C4B8",
+                    color: "#fff",
+                    "&:hover": {
+                      background: "#5b887c",
+                    },
+                  }}
+                  onClick={onClearAttachment}
+                >
+                  Clear
+                </Button>
+              </Box>
+            )}
+
+          */}
+
+
+
+
           <Button onClick={(e) => updateInfo()}>update</Button>
           <Button onClick={(e) => setModalOpen(false)}>닫기</Button>
         </Box>

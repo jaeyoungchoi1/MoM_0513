@@ -9,7 +9,7 @@ React.useLayoutEffect = React.useEffect;
 const App = () => {
   const [infos, setInfos] = useState([]);
   const [selectedItem, setSelectedItem] = useState({
-    position: { latitude: 0, longitude: 0 },
+    position: { latitude: 37.5, longitude: 127 },
   });
   const [infoWindow, setInfoWindow] = useState(false);
   const fireData = firestore.collection("places");
